@@ -9,15 +9,34 @@ import pandas as pd
 AIRAC_INTERVAL = datetime.timedelta(days=28)
 AIRAC_INITIAL_DATE = datetime.date(2015, 1, 8)
 
-def airac_date(dt = None):
+
+def airac_date(dt=None):
     if dt is None:
         dt = datetime.datetime.utcnow().date()
-    return AIRAC_INITIAL_DATE + ((dt - AIRAC_INITIAL_DATE).days // AIRAC_INTERVAL.days) * AIRAC_INTERVAL
+    return (
+        AIRAC_INITIAL_DATE
+        + ((dt - AIRAC_INITIAL_DATE).days // AIRAC_INTERVAL.days) * AIRAC_INTERVAL
+    )
 
 
 # SIA
 BASE_URL_SIA = "https://www.sia.aviation-civile.gouv.fr"
-MONTH_FR = ['', 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+MONTH_FR = [
+    "",
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+]
+
 
 def format_french_date(dt):
     return "%02d_%s_%d" % (dt.day, MONTH_FR[dt.month], dt.year)
@@ -44,7 +63,6 @@ def webscrap_sia(driver, dt, username, password):
     for opt in element.find_elements_by_tag_name("option"):
         codes.append(opt.get_property("value"))
         names.append(opt.text)
-
     df = pd.DataFrame({"code": codes, "name": names})
 
     iso_date = dt_airac.isoformat()
@@ -64,10 +82,14 @@ def webscrap_sia(driver, dt, username, password):
     help="Selenium web driver ('chrome', 'firefox' (aka 'gecko')",
 )
 @click.option(
-    "--username", default="", help="username",
+    "--username",
+    default="",
+    help="username",
 )
 @click.option(
-    "--password", default="", help="password",
+    "--password",
+    default="",
+    help="password",
 )
 def main(driver, username, password):
     """Web scraping SIA data."""
@@ -82,7 +104,6 @@ def main(driver, username, password):
         driver = webdriver.Chrome()
     else:
         raise NotImplementedError(f"unsupported web driver {driver}")
-
     dt = datetime.datetime.utcnow()
 
     webscrap_sia(driver, dt, username, password)
