@@ -5,12 +5,32 @@ from time import sleep
 import pandas as pd
 
 
+# AIRAC
+AIRAC_INTERVAL = datetime.timedelta(days=28)
+AIRAC_INITIAL_DATE = datetime.date(2015, 1, 8)
+
+def airac_date(dt = None):
+    if dt is None:
+        dt = datetime.datetime.utcnow().date()
+    return AIRAC_INITIAL_DATE + ((dt - AIRAC_INITIAL_DATE).days // AIRAC_INTERVAL.days) * AIRAC_INTERVAL
+
+
+# SIA
 BASE_URL_SIA = "https://www.sia.aviation-civile.gouv.fr"
+MONTH_FR = ['', 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+
+def format_french_date(dt):
+    return "%02d_%s_%d" % (dt.day, MONTH_FR[dt.month], dt.year)
 
 
 def webscrap_sia(driver, dt, username, password):
     base_url = BASE_URL_SIA
-    airac_string = "07_OCT_2021"
+
+    dt_airac = airac_date(dt.date())
+    # airac_string = "07_OCT_2021"
+    airac_string = format_french_date(dt_airac)
+
+    base_url = BASE_URL_SIA
     endpoint = "/dvd/eAIP_%s/Atlas-VAC/FR/VACProduitPartie.htm" % airac_string
     url = base_url + endpoint
     driver.get(url)
@@ -27,11 +47,12 @@ def webscrap_sia(driver, dt, username, password):
 
     df = pd.DataFrame({"code": codes, "name": names})
 
-    fname = "AD_%s.xlsx" % airac_string
+    iso_date = dt_airac.isoformat()
+    fname = "AD_%s.xlsx" % iso_date
     print("Write %s" % fname)
     df.to_excel(fname, index=False)
 
-    fname = "AD_%s.csv" % airac_string
+    fname = "AD_%s.csv" % iso_date
     print("Write %s" % fname)
     df.to_csv(fname, index=False, sep=";")
 
