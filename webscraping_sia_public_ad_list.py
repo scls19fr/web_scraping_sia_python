@@ -1,46 +1,14 @@
 import click
-import datetime
 from selenium import webdriver
+import datetime
+from airac import airac_date
+from sia import BASE_URL_SIA, format_french_date
 from time import sleep
 from pathlib import Path
 import pandas as pd
 
 
-# AIRAC
-AIRAC_INTERVAL = datetime.timedelta(days=28)
-AIRAC_INITIAL_DATE = datetime.date(2015, 1, 8)
-
-
-def airac_date(dt=None):
-    if dt is None:
-        dt = datetime.datetime.utcnow().date()
-    return (
-        AIRAC_INITIAL_DATE
-        + ((dt - AIRAC_INITIAL_DATE).days // AIRAC_INTERVAL.days) * AIRAC_INTERVAL
-    )
-
-
 # SIA
-BASE_URL_SIA = "https://www.sia.aviation-civile.gouv.fr"
-MONTH_FR = [
-    "",
-    "JAN",
-    "FEB",
-    "MAR",
-    "APR",
-    "MAY",
-    "JUN",
-    "JUL",
-    "AUG",
-    "SEP",
-    "OCT",
-    "NOV",
-    "DEC",
-]
-
-
-def format_french_date(dt):
-    return "%02d_%s_%d" % (dt.day, MONTH_FR[dt.month], dt.year)
 
 
 def webscrap_sia(driver, dt, username, password):
