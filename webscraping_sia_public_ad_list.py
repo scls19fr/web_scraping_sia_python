@@ -8,9 +8,6 @@ from pathlib import Path
 import pandas as pd
 
 
-# SIA
-
-
 def webscrap_sia(driver, dt, username, password):
     base_url = BASE_URL_SIA
 
