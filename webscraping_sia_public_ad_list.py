@@ -2,6 +2,7 @@ import click
 import datetime
 from selenium import webdriver
 from time import sleep
+from pathlib import Path
 import pandas as pd
 
 
@@ -65,12 +66,14 @@ def webscrap_sia(driver, dt, username, password):
         names.append(opt.text)
     df = pd.DataFrame({"code": codes, "name": names})
 
-    iso_date = dt_airac.isoformat()
-    fname = "AD_%s.xlsx" % iso_date
+    path = Path(__file__).parent / dt_airac.isoformat()
+    path.mkdir(parents=True, exist_ok=True)
+
+    fname = path / "AD.xlsx"
     print("Write %s" % fname)
     df.to_excel(fname, index=False)
 
-    fname = "AD_%s.csv" % iso_date
+    fname = path / "AD.csv"
     print("Write %s" % fname)
     df.to_csv(fname, index=False, sep=";")
 
