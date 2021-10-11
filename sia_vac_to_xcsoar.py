@@ -19,7 +19,7 @@ def sia_vac_to_xcsoar():
 
     with open(wpt_details_path / "WPT_DETAILS.txt", "w") as fd:
         for i, code in enumerate(df.index):
-            print(f"proceed {code} {i+1}/%d" % len(df.index))
+            print(f"proceed {code} {i+1}/%d" % len(df.index), end="")
             # ToDo : copy vac pdf file
 
             print(f"[{code}]", file=fd)
@@ -37,8 +37,10 @@ def sia_vac_to_xcsoar():
             print(f"image=wpt_details/{filename_vac}" + ".pdf", file=fd)
             images = convert_from_path(vac_path / (filename_vac + ".pdf"))
             (wpt_details_path / code).mkdir(parents=True, exist_ok=True)
-            for i, image in enumerate(images):
-                picture_filename = f"AD-2.{code}-%02d.jpg" % (i + 1)
+            pages = len(images)
+            print(f" with {pages} page(s)")
+            for j, image in enumerate(images):
+                picture_filename = f"AD-2.{code}-%02d.jpg" % (j + 1)
                 page_path = wpt_details_path / code / picture_filename
                 print(f"image=wpt_details/{code}/{picture_filename}", file=fd)
                 image.save(page_path, "JPEG")
