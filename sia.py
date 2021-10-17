@@ -20,4 +20,4 @@ MONTH_FR = [
 
 
 def format_french_date(dt):
-    return "%02d_%s_%02d" % (dt.day, MONTH_FR[dt.month], dt.year)
+    return "%02d_%s_%d" % (dt.day, MONTH_FR[dt.month], dt.year)
